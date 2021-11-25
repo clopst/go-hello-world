@@ -1,0 +1,25 @@
+name: publish
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Login to Github Container Repository
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          passsword: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Build the hello-world Docker Image
+        run: |
+          docker build . --tag ghcr.io/clopst/go-hello-world:latest
+          docker run ghcr.io/clopst/go-hello-world:latest
+          docker push ghcr.io/clopst/go-hello-world:latest
